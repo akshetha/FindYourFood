@@ -5,162 +5,220 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>FoodMap</title>
 <style>
-  html,body { height:100%; margin:0; font-family:system-ui, sans-serif; background:#562323; color:#4a1d1d; }
-  .stage {
-    width:100%;
-    height:100vh;
-    display:flex; 
-    align-items:center;
-    justify-content:center;
-    gap:12px;
-    padding:12px;
-    box-sizing:border-box;
-  }
+ html,body { height:100%; margin:0; font-family:system-ui, sans-serif; background:#562323; color:#4a1d1d; }
+ .stage {
+   width:100%;
+   height:100vh;
+   display:flex;
+   align-items:center;
+   justify-content:center;
+   gap:12px;
+   padding:12px;
+   box-sizing:border-box;
+ }
 
-  /* size of the box that has the image inside */
-  .viewport {
-    width: 900px;
-    height: 800px;
-    max-width: calc(100% - 200px);
-    background: #471212; /* color of box */
-    overflow: hidden; /* so that the box doesn't take over the world */
-    border-radius: 20px; /* curviness of edges */
-    position:relative;
-    touch-action: none; /* eeehh technically pinch-zoom but my comp isnt recognizing it and this works so idk */
-  }
 
-  /* pan-zoom */
-  .img {
-    position:absolute;
-    top:0;
-    left:0;
-    user-select:none;
-    -webkit-user-drag:none;
-    will-change: transform;
-    transform-origin: 0 0; /* where the image comes from */
-    cursor: grab;
-  }
-  .img.dragging {cursor: grabbing;}
-  .controls {
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-    min-width:160px;
-  }
-  /* END OF CSS */
+ /* button section here for general button layout*/
+ .stage .btn{
+   position: absolute;
+   right: 60px; /* same */
+   transform: translate(-50%, -50%);
+   -ms-transform: translate(-50%,-50%);
+   background-color: rgb(78, 113, 177);
+   color: white;
+   border: none;
+   padding: 10px 50px; /* box size */
+   text-align: center;
+   font-size: 20px; 
+   border-radius: 5px;
+   cursor: pointer;
+ }
+
+ /* button hover colors */
+.stage .btn:hover {
+ background-color: rgb(51, 130, 77);
+ color: white;
+}
+
+/* .btn-img {
+  width: 50px;
+  height: 10px;
+  border-radius: 10px;
+  transition: transform 0.2s ease; 
+} */
+
+/* .btn-img:hover {
+  transform: scale(1.1);
+} */
+
+#pines.btn {
+  top: 220px; /* we could individualize padding and right*/
+              /* this can center boxes on screen */
+}
+#sixfour.btn {
+  top: 300px;
+}
+
+ /* size of the box that has the image inside */
+ .viewport {
+   width: 900px;
+   height: 800px;
+   max-width: calc(100% - 200px);
+   background: #471212; /* color of box */
+   overflow: hidden; /* so that the box doesn't take over the world */
+   border-radius: 20px; /* curviness of edges */
+   position:relative;
+   touch-action: none; /* eeehh technically pinch-zoom but my comp isnt recognizing it and this works so idk */
+ }
+
+ /* pan-zoom */
+ .img {
+   position:absolute;
+   top:0;
+   left:0;
+   user-select:none;
+   -webkit-user-drag:none;
+   will-change: transform;
+   transform-origin: 0 0; /* where the image comes from */
+   cursor: grab;
+ }
+ .img.dragging {cursor: grabbing;}
+ .controls {
+   display:flex;
+   flex-direction:column;
+   gap:8px;
+   min-width:160px;
+ }
+ /* END OF CSS */
 </style>
 </head>
 <body>
+
 <div class="stage">
-  <div class="viewport" id="viewport">
-    <img id="map" class="img" src="map.jpeg" draggable="false"> <!-- map's name -->
-  </div>
-
-
+  <button id = "pines" class = "btn"> PINES </button>
+<!-- <button id = "pines" class = "btn">
+  <img src="pines.png" alt="PINES" class="btn-img"> if we want make our button go over an image
+</button> -->
+<button id = "sixfour" class = "btn">64</button>
+ <div class="viewport" id="viewport">
+      <img id="map" class="img" src="map.jpeg" draggable="false"> <!-- map's name -->
+ </div>
 </div>
+
 
 <script>
 (() => {
-  const img = document.getElementById('map');
-  const vp = document.getElementById('viewport');
-  let scale = 1;
-  let minScale = 0.2; 
-  let maxScale = 6;
-  let translate = { x: 0, y: 0 }; 
-  let isDragging = false;
-  let dragStart = { x: 0, y: 0 };
-  let translateStart = { x: 0, y: 0 };
+ const img = document.getElementById('map');
+ const vp = document.getElementById('viewport');
+ let scale = 1;
+ let minScale = 0.2;
+ let maxScale = 6;
+ let translate = { x: 0, y: 0 };
+ let isDragging = false;
+ let dragStart = { x: 0, y: 0 };
+ let translateStart = { x: 0, y: 0 };
 
-  function fitToView() {
-    const iw = img.naturalWidth;
-    const ih = img.naturalHeight;
-    const vw = vp.clientWidth;
-    const vh = vp.clientHeight;
-    const s = Math.min(vw/iw, vh/ih);
-    scale = s;
-    // center image
-    const dispW = iw * scale, dispH = ih * scale;
-    translate.x = Math.max(0, (vw - dispW) / 2);
-    translate.y = Math.max(0, (vh - dispH) / 2);
-    clampTranslate();
-  }
 
-  function update() {
-    img.style.transform = `translate(${translate.x}px, ${translate.y}px) scale(${scale})`;
-  }
-  img.addEventListener('load', ()=>{
-    fitToView();
-    update();
-  });
+ function fitToView() {
+   const iw = img.naturalWidth;
+   const ih = img.naturalHeight;
+   const vw = vp.clientWidth;
+   const vh = vp.clientHeight;
+   const s = Math.min(vw/iw, vh/ih);
+   scale = s;
+   // center image
+   const dispW = iw * scale, dispH = ih * scale;
+   translate.x = Math.max(0, (vw - dispW) / 2);
+   translate.y = Math.max(0, (vh - dispH) / 2);
+   clampTranslate();
+ }
 
-  function clampTranslate() {
-    const iw = img.naturalWidth * scale;
-    const ih = img.naturalHeight * scale;
-    const bw = vp.clientWidth;
-    const bh = vp.clientHeight;
 
-    if (iw <= bw) { // cant go past edges
-      translate.x = (bw - iw) / 2;
-    } else {
-      const minX = bw - iw; 
-      translate.x = Math.min(0, Math.max(minX, translate.x));
-    }
+ function update() {
+   img.style.transform = `translate(${translate.x}px, ${translate.y}px) scale(${scale})`;
+ }
+ img.addEventListener('load', ()=>{
+   fitToView();
+   update();
+ });
 
-    if (ih <= bh) {
-      translate.y = (bh - ih) / 2;
-    } else {
-      const minY = bh - ih;
-      translate.y = Math.min(0,Math.max(minY, translate.y));
-    }
-  }
+
+ function clampTranslate() {
+   const iw = img.naturalWidth * scale;
+   const ih = img.naturalHeight * scale;
+   const bw = vp.clientWidth;
+   const bh = vp.clientHeight;
+
+
+   if (iw <= bw) { // cant go past edges
+     translate.x = (bw - iw) / 2;
+   } else {
+     const minX = bw - iw;
+     translate.x = Math.min(0, Math.max(minX, translate.x));
+   }
+
+
+   if (ih <= bh) {
+     translate.y = (bh - ih) / 2;
+   } else {
+     const minY = bh - ih;
+     translate.y = Math.min(0,Math.max(minY, translate.y));
+   }
+ }
+
 
 // dragging controls
-  vp.addEventListener('mousedown', (e)=>{
-    isDragging = true;
-    vp.style.cursor = 'grabbing';
-    img.classList.add('dragging');
-    dragStart = { x: e.clientX, y: e.clientY };
-    translateStart = { ...translate };
-  });
-  window.addEventListener('mousemove', (e)=>{
-    if (!isDragging) return;
-    const dx = e.clientX - dragStart.x;
-    const dy = e.clientY - dragStart.y;
-    translate.x = translateStart.x + dx;
-    translate.y = translateStart.y + dy;
-    clampTranslate();
-    update();
-  });
-  window.addEventListener('mouseup', ()=>{
-    isDragging = false;
-    vp.style.cursor = 'default';
-    img.classList.remove('dragging');
-  });
+ vp.addEventListener('mousedown', (e)=>{
+   isDragging = true;
+   vp.style.cursor = 'grabbing';
+   img.classList.add('dragging');
+   dragStart = { x: e.clientX, y: e.clientY };
+   translateStart = { ...translate };
+ });
+ window.addEventListener('mousemove', (e)=>{
+   if (!isDragging) return;
+   const dx = e.clientX - dragStart.x;
+   const dy = e.clientY - dragStart.y;
+   translate.x = translateStart.x + dx;
+   translate.y = translateStart.y + dy;
+   clampTranslate();
+   update();
+ });
+ window.addEventListener('mouseup', ()=>{
+   isDragging = false;
+   vp.style.cursor = 'default';
+   img.classList.remove('dragging');
+ });
 
-  // towards cursor -> MOUSE WHEEL
-  vp.addEventListener('wheel', (e)=>{
-    e.preventDefault();
-    const delta = -e.deltaY;
-    const zoomFactor = delta > 0?1.08:1/1.08;
-    const rect = vp.getBoundingClientRect();
-    const cx = e.clientX - rect.left;
-    const cy = e.clientY - rect.top;
 
-    zoomAt(zoomFactor, cx, cy);
-  }, { passive: false }); // zooms the whole screen if true
+ // towards cursor -> MOUSE WHEEL
+ vp.addEventListener('wheel', (e)=>{
+   e.preventDefault();
+   const delta = -e.deltaY;
+   const zoomFactor = delta > 0?1.08:1/1.08;
+   const rect = vp.getBoundingClientRect();
+   const cx = e.clientX - rect.left;
+   const cy = e.clientY - rect.top;
 
-  function zoomAt(factor, cx, cy) { //zooming
-    const newScale = Math.max(minScale, Math.min(maxScale, scale * factor));
-    const x = (cx - translate.x) / scale; // image transformations
-    const y = (cy - translate.y) / scale;
-    
-    translate.x = cx - x * newScale; // matches scale
-    translate.y = cy - y * newScale;
-    scale = newScale;
 
-    clampTranslate();
-    update();
-  }
+   zoomAt(zoomFactor, cx, cy);
+ }, { passive: false }); // zooms the whole screen if true
+
+
+ function zoomAt(factor, cx, cy) { //zooming
+   const newScale = Math.max(minScale, Math.min(maxScale, scale * factor));
+   const x = (cx - translate.x) / scale; // image transformations
+   const y = (cy - translate.y) / scale;
+  
+   translate.x = cx - x * newScale; // matches scale
+   translate.y = cy - y * newScale;
+   scale = newScale;
+
+
+   clampTranslate();
+   update();
+ }
+
 
 })();
 </script>
