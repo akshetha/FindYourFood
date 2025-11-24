@@ -20,24 +20,60 @@
 
  /* button section here for general button layout*/
  .stage .btn{
-   position: absolute;
-   right: 60px; /* same */
-   transform: translate(-50%, -50%);
+   position: fixed; /* changed this to fixed so we can move each individual button, abs keeps it all the same */
+   right: 10px; /* same, originally 60 */
+   transform: translate(-40%, -20%);
    -ms-transform: translate(-50%,-50%);
-   background-color: rgb(78, 113, 177);
+   transform: translateX(-60px);
+   background-color: rgb(177, 78, 104);
    color: white;
    border: none;
-   padding: 10px 50px; /* box size */
+   padding: 10px 10px; /* box size */
    text-align: center;
    font-size: 20px; 
    border-radius: 5px;
    cursor: pointer;
+   width: 180px;
+   /* width: 200px; */
  }
 
  /* button hover colors */
 .stage .btn:hover {
- background-color: rgb(51, 130, 77);
+ background-color: rgb(140, 22, 81);
  color: white;
+}
+/* popup window below*/
+.pop{
+  background-color: white;
+  opacity: 0;
+  position: fixed;
+  /* top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0; */
+  width: 500px;
+  height: 500px;
+  transition: all 0.3s ease-in-out;
+  z-index: -1;
+
+  display:flex;
+  align-items: baseline;
+  justify-content: center;
+}
+
+.pop.open {
+  opacity: 1;
+  z-index: 999;
+}
+
+#saveResponse.btn{
+  top: 130px;
+  right: 540px;
+}
+
+#closeModal.btn{
+  top: 130px;
+  right: 870px;
 }
 
 /* .btn-img {
@@ -50,13 +86,38 @@
 /* .btn-img:hover {
   transform: scale(1.1);
 } */
-
+#ventanas.btn{
+  top: 180px;
+  /* transform: translateX(-50px); */
+}
+#roots.btn{
+  top: 260px;
+  /* transform: translateX(-68px); */
+}
 #pines.btn {
-  top: 220px; /* we could individualize padding and right*/
-              /* this can center boxes on screen */
+  top: 340px;
+  /* transform: translateX(-70px); */
+   /* we could individualize padding and right*/
+  /* this can center boxes on screen */
 }
 #sixfour.btn {
-  top: 300px;
+  top: 420px;
+  /* transform: translateX(-85px); */
+}
+#canyon.btn {
+  top: 500px;
+  /* transform: translateX(-30px); */
+}
+#sixth.btn{
+  top: 580px;
+}
+#bistro.btn {
+  top: 660px;
+  /* transform: translateX(-60px); */
+}
+#ocean.btn {
+  top: 740px;
+  /* transform: translateX(-43px); */
 }
 
  /* size of the box that has the image inside */
@@ -95,11 +156,31 @@
 <body>
 
 <div class="stage">
-  <button id = "pines" class = "btn"> PINES </button>
-<!-- <button id = "pines" class = "btn">
+  <!-- <button id = "pines" class = "btn">
   <img src="pines.png" alt="PINES" class="btn-img"> if we want make our button go over an image
 </button> -->
-<button id = "sixfour" class = "btn">64</button>
+  <button id = "ventanas" class = "btn">VENTANAS</button>
+  <button id = "pines" class = "btn"> PINES </button>
+  <button id = "roots" class = "btn">ROOTS</button>
+  <button id = "canyon" class = "btn">CANYON VISTA</button>
+  <button id = "sixfour" class = "btn">64 DEGREES</button>
+  <button id = "sixth" class = "btn">SIXTH COLLEGE</button>
+  <button id = "bistro" class = "btn">BISTRO</button>
+  <button id = "ocean" class = "btn">OCEAN VIEW</button>
+
+<div class = "pop" id="pop">
+  <div class = "modal-inner">
+    <h1 id="modalTitle">My Rate</h1>
+          <textarea id="userInput" 
+      placeholder="Write your comments here..."
+      style="width: 90%; height: 200px; margin-top: 20px; font-size: 16px;"></textarea>
+
+    <!-- save button jkjjjhuyffdgrtfyguiuoi;lihgfdxfghtjyukilo;uygftdgxfzgrhtfyuiolukugjyfgthdfrgsdsrhtfgukiloi;lhgftdrfgfhtjkuilo;kojlihgftdfzgrhtfyiuopuoytfdrfgsertuyio-->
+    <button id="saveResponse" class="btn">Save</button>
+    <button id = "closeModal" class = "btn">Close</button>
+  </div>
+</div>
+
  <div class="viewport" id="viewport">
       <img id="map" class="img" src="map.jpeg" draggable="false"> <!-- map's name -->
  </div>
@@ -108,6 +189,43 @@
 
 <script>
 (() => {
+  //click on button to open popup
+(() => {
+  const buttons = document.querySelectorAll(".btn");
+  const pop = document.getElementById("pop");
+  const closeBtn = document.getElementById("closeModal");
+  const modalTitle = document.getElementById("modalTitle");
+  const userInput = document.getElementById("userInput");
+  const saveBtn = document.getElementById("saveResponse");
+
+  let currentHall = "";
+
+  document.querySelectorAll(".btn").forEach((button) => {
+    if (button.id === "closeModal" || button.id === "saveResponse") return;
+
+    button.addEventListener("click", () => {
+      currentHall = button.textContent.trim();
+      modalTitle.textContent = `RATING ${currentHall}`;
+
+      const savedText = localStorage.getItem("rating_" + currentHall) || "";
+      userInput.value = savedText;
+
+      pop.classList.add("open");
+    });
+  });
+
+  saveBtn.addEventListener("click", () => {
+    localStorage.setItem("rating_" + currentHall, userInput.value);
+    saveBtn.textContent = "Saved!";
+    setTimeout(() => saveBtn.textContent = "Save", 1000); //savedtime
+  });
+
+  closeBtn.addEventListener("click", () => {
+    pop.classList.remove("open");
+  });
+})();
+
+
  const img = document.getElementById('map');
  const vp = document.getElementById('viewport');
  let scale = 1;
