@@ -65,7 +65,10 @@
 }
 #closeModal.btn{
   top: 130px;
-  right: 870px;
+  right: 890px;
+}
+ul {
+  color: black;
 }
 
 /* .btn-img {
@@ -146,7 +149,6 @@
 </style>
 </head>
 <body>
-
 <div class="stage">
   <!-- <button id = "pines" class = "btn">
   <img src="pines.png" alt="PINES" class="btn-img"> if we want make our button go over an image
@@ -163,7 +165,14 @@
 <div class = "pop" id="pop">
   <div class = "modal-inner">
     <h1>Rating </h1>
+    <h2>-------------------------------</h2>
     <button id = "closeModal" class = "btn">x</button>
+    <!-- start of input for food item rating here -->
+      <input type = "text" name = "menu" id = "menu">
+    <button id = "add">Rate Items</button>
+    <ul id = "list">
+      <li>Ex. Orange Chicken 5/10</li>
+    </ul>
   </div>
 </div>
 
@@ -189,9 +198,23 @@
     });
   });
 
+
   closeBtn.addEventListener("click", () => {
     pop.classList.remove("open");
   });
+  //item adding method here
+  const list = document.getElementById('list');
+  const menu = document.getElementById('menu');
+  const add = document.getElementById('add');
+  
+  add.addEventListener('click', (event) => {
+    console.log(menu.value)
+    const li = document.createElement('li');
+    const liText = document.createTextNode(menu.value);
+    li.appendChild(liText);
+    list.appendChild(li);
+    menu.value = '';
+  })
 })();
 
 
