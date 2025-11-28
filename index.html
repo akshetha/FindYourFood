@@ -17,7 +17,6 @@
    box-sizing:border-box;
  }
 
-
  /* button section here for general button layout*/
  .stage .btn{
    position: fixed; /* changed this to fixed so we can move each individual button, abs keeps it all the same */
@@ -51,7 +50,7 @@
   left: 0;
   right: 0;
   bottom: 0; */
-  width: 500px;
+  width: 600px;
   height: 500px;
   transition: all 0.3s ease-in-out;
   z-index: -1;
@@ -59,6 +58,25 @@
   display:flex;
   align-items: baseline;
   justify-content: center;
+}
+
+.pop .modal-inner {
+  display: flex;
+  flex-direction: column; 
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.pop input,
+.pop ul {
+  width: 90%;
+  max-height: 200px;
+  overflow-y: auto;
+  padding-left: 20px;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 .pop.open {
@@ -154,30 +172,27 @@
 </style>
 </head>
 <body>
-
 <div class="stage">
   <!-- <button id = "pines" class = "btn">
   <img src="pines.png" alt="PINES" class="btn-img"> if we want make our button go over an image
 </button> -->
-  <button id = "ventanas" class = "btn">VENTANAS</button>
-  <button id = "pines" class = "btn"> PINES </button>
-  <button id = "roots" class = "btn">ROOTS</button>
-  <button id = "canyon" class = "btn">CANYON VISTA</button>
-  <button id = "sixfour" class = "btn">64 DEGREES</button>
-  <button id = "sixth" class = "btn">SIXTH COLLEGE</button>
-  <button id = "bistro" class = "btn">BISTRO</button>
-  <button id = "ocean" class = "btn">OCEAN VIEW</button>
+<button id = "ventanas" class = "btn">VENTANAS</button>
+<button id = "pines" class = "btn"> PINES </button>
+<button id = "roots" class = "btn">ROOTS</button>
+<button id = "canyon" class = "btn">CANYON VISTA</button>
+<button id = "sixfour" class = "btn">64 DEGREES</button>
+<button id = "sixth" class = "btn">SIXTH COLLEGE</button>
+<button id = "bistro" class = "btn">BISTRO</button>
+<button id = "ocean" class = "btn">OCEAN VIEW</button>
 
 <div class = "pop" id="pop">
   <div class = "modal-inner">
-    <h1 id="modalTitle">My Rate</h1>
-          <textarea id="userInput" 
-      placeholder="Write your comments here..."
-      style="width: 90%; height: 200px; margin-top: 20px; font-size: 16px;"></textarea>
-
-    <!-- save button jkjjjhuyffdgrtfyguiuoi;lihgfdxfghtjyukilo;uygftdgxfzgrhtfyuiolukugjyfgthdfrgsdsrhtfgukiloi;lhgftdrfgfhtjkuilo;kojlihgftdfzgrhtfyiuopuoytfdrfgsertuyio-->
-    <button id="saveResponse" class="btn">Save</button>
-    <button id = "closeModal" class = "btn">Close</button>
+    <h1>Rating </h1>
+    <h2>-------------------------------</h2>
+    <button id = "closeModal" class = "btn">x</button>
+      <input type = "text" name = "menu" id = "menu">
+    <button id = "add">Rate Items</button>
+    <ul id = "list"></ul>
   </div>
 </div>
 
@@ -191,41 +206,107 @@
 (() => {
   //click on button to open popup
 (() => {
+  let currentHall = null;
+  const STORAGE_KEY = "HALL_DATA"
+
   const buttons = document.querySelectorAll(".btn");
   const pop = document.getElementById("pop");
   const closeBtn = document.getElementById("closeModal");
-  const modalTitle = document.getElementById("modalTitle");
-  const userInput = document.getElementById("userInput");
-  const saveBtn = document.getElementById("saveResponse");
+  const modalTitle = pop.querySelector("h1");
+  const list = document.getElementById('list');
+  const menu = document.getElementById('menu');
+  const add = document.getElementById('add');
+  const mostLiked = document.getElementById('mostLiked');
 
-  let currentHall = "";
+  //LIST FEATURE
+  function loadHall(hall){
+    const norm = localStorage.getItem(STORAGE_KEY + hall);
+    if (!norm) return [];
+    try { 
+      return JSON.parse(norm); 
+    } 
+    catch { 
+      return []; 
+    }
+  }
 
-  document.querySelectorAll(".btn").forEach((button) => {
-    if (button.id === "closeModal" || button.id === "saveResponse") return;
+  function saveHall(hall, data) {
+    localStorage.setItem(STORAGE_KEY + hall, JSON.stringify(data));
+  }
 
+  function renderList() {
+  list.innerHTML = "";
+  const data = loadHall(currentHall);
+
+  data.sort((a, b) => {
+    if (a.rating === 0 && b.rating !== 0) return -1; 
+    if (a.rating !== 0 && b.rating === 0) return 1;
+    return b.rating - a.rating;
+  });
+
+  data.forEach(item => {
+  const li = document.createElement('li');
+  li.textContent = `${item.name} — ${item.rating}★`;
+
+  //ADD STAR
+  const starContainer = document.createElement('div');
+  starContainer.style.display = "inline-block";
+  starContainer.style.marginLeft = "10px";
+
+
+  for (let i = 1; i <= 5; i++) {
+    const star = document.createElement('span');
+    star.textContent = i <= item.rating ? "★" : "☆";
+    star.style.cursor = "pointer";
+    star.style.fontSize = "22px";
+    star.style.color = "maroon";
+
+
+    star.addEventListener('click', () => {
+    item.rating = i;
+    saveHall(currentHall, data);
+    renderList();
+    });
+
+    starContainer.appendChild(star);
+}
+
+
+li.appendChild(starContainer);
+list.appendChild(li);
+});
+}
+
+  //BUTTONS
+  buttons.forEach((button) => {
     button.addEventListener("click", () => {
-      currentHall = button.textContent.trim();
-      modalTitle.textContent = `RATING ${currentHall}`;
-
-      const savedText = localStorage.getItem("rating_" + currentHall) || "";
-      userInput.value = savedText;
-
+      currentHall = button.id;
+      modalTitle.textContent = `Rating ${button.textContent}`;
       pop.classList.add("open");
+      renderList();
     });
   });
 
-  saveBtn.addEventListener("click", () => {
-    localStorage.setItem("rating_" + currentHall, userInput.value);
-    saveBtn.textContent = "Saved!";
-    setTimeout(() => saveBtn.textContent = "Save", 1000); //savedtime
-  });
 
   closeBtn.addEventListener("click", () => {
     pop.classList.remove("open");
   });
+  
+  add.addEventListener('click', (event) => {
+    const name = menu.value.trim();
+    if (!name) return;
+    const data = loadHall(currentHall);
+    data.push({ name: name, rating: 0 });
+
+    saveHall(currentHall, data);
+
+    menu.value = '';
+    renderList();
+  });
 })();
 
 
+//MAP [DONT EDIT]
  const img = document.getElementById('map');
  const vp = document.getElementById('viewport');
  let scale = 1;
