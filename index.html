@@ -18,27 +18,27 @@
  }
 
  /* button section here for general button layout*/
- .stage .btn{
-   position: fixed; /* changed this to fixed so we can move each individual button, abs keeps it all the same */
+ .viewport .btn{
+   position: absolute; /* changed this to fixed so we can move each individual button, abs keeps it all the same */
    right: 10px; /* same, originally 60 */
    transform: translate(-40%, -20%);
    -ms-transform: translate(-50%,-50%);
-   transform: translateX(-60px);
+   transform: translateX(-1380px);
    background-color:#c69214;
    color: white;
    border: none;
-   padding: 5px 5px; /* box size */
+   padding: 2px 2px; /* box size */
    text-align: center;
    font-size: 15px; 
    border-radius: 5px;
    cursor: pointer;
-   width: 150px;
+   width: 140px;
    z-index: 1000;
    /* width: 200px; */
  }
 
  /* button hover colors */
-.stage .btn:hover {
+.viewport .btn:hover {
  background-color: #9E740D;
  color: white;
 }
@@ -117,38 +117,38 @@
   transform: scale(1.1);
 }
 #ventanas.btn{
-  top: 120px;
-  transform: translateX(-780px);
+  top: 170px;
+  left: 130px;
 }
 #roots.btn{
-  top: 380px;
-  transform: translateX(-790px);
+  top: 420px;
+  left: 130px;
 }
 #pines.btn {
-  top: 415px;
-  transform: translateX(-790px);
+  top: 450px;
+  left: 130px;
    /* we could individualize padding and right*/
   /* this can center boxes on screen */
 }
 #sixfour.btn {
-  top: 540px;
-  transform: translateX(-780px);
+  top: 600px;
+  left: 130px;
 }
 #canyon.btn {
-  top: 200px;
-  transform: translateX(-550px);
+  top: 250px;
+  left: 360px;
 }
 #sixth.btn{
-  top: 310px;
-  transform: translateX(-780px);
+  top: 350px;
+  left: 130px;
 }
 #bistro.btn {
-  top: 40px;
-  transform: translateX(-780px);
+  top: 80px;
+  left: 130px;
 }
 #ocean.btn {
-  top: 260px;
-  transform: translateX(-650px);
+  top: 295px;
+  left: 230px;
 }
 
  /* size of the box that has the image inside */
@@ -189,14 +189,7 @@
   <!-- <button id = "pines" class = "btn">
   <img src="pines.png" alt="PINES" class="btn-img"> if we want make our button go over an image
 </button> -->
-<button id = "ventanas" class = "btn">VENTANAS</button>
-<button id = "pines" class = "btn"> PINES </button>
-<button id = "roots" class = "btn">ROOTS</button>
-<button id = "canyon" class = "btn">CANYON VISTA</button>
-<button id = "sixfour" class = "btn">64 DEGREES</button>
-<button id = "sixth" class = "btn">SIXTH COLLEGE</button>
-<button id = "bistro" class = "btn">BISTRO</button>
-<button id = "ocean" class = "btn">OCEAN VIEW</button>
+
 
 <div class = "pop" id="pop">
   <div class = "modal-inner">
@@ -211,6 +204,14 @@
 
  <div class="viewport" id="viewport">
       <img id="map" class="img" src="ucsd.map.png" draggable="false"> <!-- map's name -->
+      <button id = "ventanas" class = "btn">VENTANAS</button>
+      <button id = "pines" class = "btn"> PINES </button>
+      <button id = "roots" class = "btn">ROOTS</button>
+      <button id = "canyon" class = "btn">CANYON VISTA</button>
+      <button id = "sixfour" class = "btn">64 DEGREES</button>
+      <button id = "sixth" class = "btn">SIXTH COLLEGE</button>
+      <button id = "bistro" class = "btn">BISTRO</button>
+      <button id = "ocean" class = "btn">OCEAN VIEW</button>
  </div>
 </div>
 
@@ -348,7 +349,10 @@ list.appendChild(li);
 
  function update() {
    img.style.transform = `translate(${translate.x}px, ${translate.y}px) scale(${scale})`;
- }
+   document.querySelectorAll(".viewport .btn").forEach(btn => {
+    btn.style.transform = `translate(${translate.x}px, ${translate.y}px) scale(${scale})`;
+ });
+}
  img.addEventListener('load', ()=>{
    fitToView();
    update();
